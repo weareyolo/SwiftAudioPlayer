@@ -135,10 +135,8 @@ class AudioConverter: AudioConvertable {
         return try queue.sync { () -> AVAudioPCMBuffer in
             let framesPerPacket = engineAudioFormat.streamDescription.pointee.mFramesPerPacket
             var numberOfPacketsWeWantTheBufferToFill = pcmBuffer.frameLength / framesPerPacket
-            
             let context = unsafeBitCast(self, to: UnsafeMutableRawPointer.self)
             let status = AudioConverterFillComplexBuffer(converter, ConverterListener, context, &numberOfPacketsWeWantTheBufferToFill, pcmBuffer.mutableAudioBufferList, nil)
-            
             guard status == noErr else {
                 switch status {
                 case ReaderMissingSourceFormatError:
