@@ -507,7 +507,7 @@ extension SAPlayer: SAPlayerDelegate {
     }
     
     func playEngine() {
-        becomeDeviceAudioPlayer()
+//        becomeDeviceAudioPlayer()
         player?.play()
     }
     
