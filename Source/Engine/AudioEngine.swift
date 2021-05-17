@@ -45,6 +45,7 @@ class AudioEngine: AudioEngineProtocol {
     
     var engine: AVAudioEngine!
     var playerNode: AVAudioPlayerNode!
+    var previousNeedleDiff: Double = -1.0
     
     static let defaultEngineAudioFormat: AVAudioFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32, sampleRate: 44100, channels: 2, interleaved: false)!
     
@@ -183,10 +184,11 @@ class AudioEngine: AudioEngineProtocol {
     
     func updateIsPlaying() {
         if !bufferedSeconds.isPlayable {
-            if bufferedSeconds.reachedEndOfAudio(needle: needle) {
+            if bufferedSeconds.reachedEndOfAudio(needle: needle, previousDiff: previousNeedleDiff) {
                 playingStatus = .ended
             } else {
                 playingStatus = .buffering
+                previousNeedleDiff = abs(needle - bufferedSeconds.totalDurationBuffered)
             }
             return
         }
@@ -207,7 +209,7 @@ class AudioEngine: AudioEngineProtocol {
                 Log.monitor(error.localizedDescription)
             }
         }
-        
+        previousNeedleDiff = 1.0
         playerNode.play()
         
         if state == .suspended {
